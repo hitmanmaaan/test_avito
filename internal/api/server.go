@@ -74,6 +74,7 @@ func (s *Server) handleTeamGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check existence in teams table
+	// Вообще плохо из api слоя запрос делать, но тк проект небольшой, упустим момент
 	var tname string
 	if err := s.repo.DB.GetContext(r.Context(), &tname, `SELECT team_name FROM teams WHERE team_name=$1`, teamName); err != nil {
 		if err == sql.ErrNoRows {

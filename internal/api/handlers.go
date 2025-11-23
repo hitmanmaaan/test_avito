@@ -5,8 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/yourname/pr-reviewer/internal/apperrors"
-	"github.com/yourname/pr-reviewer/internal/model"
+	"github.com/hitmanmaaan/test_avito/internal/apperrors"
 )
 
 func writeError(w http.ResponseWriter, httpStatus int, code string, message string) {

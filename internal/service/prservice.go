@@ -5,10 +5,9 @@ import (
 	"database/sql"
 	"strings"
 
-	"github.com/jmoiron/sqlx"
-	"github.com/yourname/pr-reviewer/internal/apperrors"
-	"github.com/yourname/pr-reviewer/internal/model"
-	"github.com/yourname/pr-reviewer/internal/repository"
+	"github.com/hitmanmaaan/test_avito/internal/apperrors"
+	"github.com/hitmanmaaan/test_avito/internal/model"
+	"github.com/hitmanmaaan/test_avito/internal/repository"
 )
 
 type Service struct {

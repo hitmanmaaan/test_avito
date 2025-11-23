@@ -3,8 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"strings"
 
 	"github.com/hitmanmaaan/test_avito/internal/model"
 	"github.com/jmoiron/sqlx"
@@ -116,21 +114,23 @@ func (r *PostgresRepository) SetPRMerged(ctx context.Context, prID string) error
 }
 
 func (r *PostgresRepository) GetActiveTeamMembersExcept(ctx context.Context, teamName string, excludes []string) ([]string, error) {
-	q := `SELECT user_id FROM users WHERE team_name=$1 AND is_active = true`
-	var args []interface{}
-	args = append(args, teamName)
+	base := `SELECT user_id FROM users WHERE team_name = ? AND is_active = true`
+
+	var ids []string
+	var err error
 
 	if len(excludes) > 0 {
-		placeholders := make([]string, len(excludes))
-		for i := range excludes {
-			placeholders[i] = fmt.Sprintf("$%d", i+2)
-			args = append(args, excludes[i])
+		query, args, inErr := sqlx.In(base+" AND user_id NOT IN (?) ORDER BY random()", teamName, excludes)
+		if inErr != nil {
+			return nil, inErr
 		}
-		q += " AND user_id NOT IN (" + strings.Join(placeholders, ",") + ")"
+		query = r.DB.Rebind(query)
+		err = r.DB.SelectContext(ctx, &ids, query, args...)
+	} else {
+		query := r.DB.Rebind(base + " ORDER BY random()")
+		err = r.DB.SelectContext(ctx, &ids, query, teamName)
 	}
-	q += " ORDER BY random()"
-	var ids []string
-	err := r.DB.SelectContext(ctx, &ids, q, args...)
+
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
